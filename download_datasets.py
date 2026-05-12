@@ -1,3 +1,6 @@
+import os
+import gdown
+
 URLS = {
     "tokyo_xs": "https://drive.google.com/file/d/15QB3VNKj93027UAQWv7pzFQO1JDCdZj2/view?usp=share_link",
     "sf_xs": "https://drive.google.com/file/d/1tQqEyt3go3vMh4fj_LZrRcahoTbzzH-y/view?usp=share_link",
@@ -5,14 +8,16 @@ URLS = {
     "svox": "https://drive.google.com/file/d/16iuk8voW65GaywNUQlWAbDt6HZzAJ_t9/view?usp=drive_link"
 }
 
-import os
-import gdown
-import shutil
+ZIP_DIR = "data_zip"
+os.makedirs(ZIP_DIR, exist_ok=True)
 
-os.makedirs("data", exist_ok=True)
 for dataset_name, url in URLS.items():
-    print(f"Downloading {dataset_name}")
-    zip_filepath = f"data/{dataset_name}.zip"
-    gdown.download(url, zip_filepath, fuzzy=True)
-    shutil.unpack_archive(zip_filepath, extract_dir="data")
-    os.remove(zip_filepath)
+    zip_filepath = os.path.join(ZIP_DIR, f"{dataset_name}.zip")
+
+    if os.path.exists(zip_filepath):
+        print(f"{dataset_name}.zip already exists, skipping.")
+        continue
+
+    print(f"Downloading {dataset_name}...")
+    gdown.download(url, zip_filepath, fuzzy=True, quiet=False)
+    print(f"Downloaded {dataset_name} to {zip_filepath}")
